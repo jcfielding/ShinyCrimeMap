@@ -10,7 +10,7 @@ library(shiny)
 shinyUI(fluidPage(
 
   # Application title
-  titlePanel("Old Faithful Geyser Data"),
+  titlePanel("Downtown Houston Texas Violent Crimes"),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(
@@ -22,9 +22,18 @@ shinyUI(fluidPage(
 #                     max = 50,
 #                     value = 30),
         
-        selectInput("crimeSelect", label = h3("Crime Type"), 
+        selectInput("crimeSelect", label = h4("Crime Type"), 
                     choices = c("Robbery","Assault","Rape","Murder"),
-                    selected = "Robbery")
+                    selected = "Robbery"),
+        
+        radioButtons("mapType", label = h4("Map Type"),
+                     #choices = c("Roadmap", "Satellite","Terrain", "Hybrid"),
+                     choices = c("Roadmap" = "Roadmap",
+                       "Satellite" = "Satellite",
+                       "Terrain" = "Terrain",
+                       "Hybrid" = "Hybrid"),
+                     
+                     selected = "Roadmap", inline = FALSE)
         
 #         checkboxGroupInput("CrimeGroup", 
 #                            label = h3("Crime"), 
@@ -36,7 +45,10 @@ shinyUI(fluidPage(
       ),
       # Show a plot of the generated distribution
       mainPanel(
-        plotOutput("mapPlot")
+        plotOutput("mapPlot"),
+        h4(textOutput("text1"), align = "center"),
+        h5(textOutput("text2"), align = "center")
+        
       )  
   
 #     # Show a plot of the generated distribution

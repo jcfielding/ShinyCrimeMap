@@ -7,57 +7,71 @@
 
 library(shiny)
 require(dplyr)
+require(ggplot2)
 require(maps)
 require(ggmap)
 
-# violent_crimes <- subset(crime, offense != "auto theft" & offense != 
-#                              "theft" & offense != "burglary")
 
-violent.crimes <- filter(crime, offense != "auto theft" & offense != 
-           "theft" & offense != "burglary")
+# # removed unused columns
+# violent.crimes <- select(crime, offense, lon , lat)
+# 
+# # subset for violent crimes
+# violent.crimes <- filter(violent.crimes, offense != "auto theft" & offense != 
+#            "theft" & offense != "burglary")
+# 
+# # factor violent crimes
+# violent.crimes$offense <- factor(violent.crimes$offense, levels =
+#                                 c("robbery", "aggravated assault", "rape", "murder"))
+# 
+# # restrict to downtown Houston
+# violent.crimes <- filter(violent.crimes, -95.39681 <= lon & lon <= 
+#                               -95.34188 & 29.73631 <= lat & lat <= 29.784)
 
-# rank violent crimes
+# removed unused columns and subset for violent crimes
+crime %>%
+    select(offense, lon , lat) %>%
+    filter(offense != "auto theft" & offense != 
+               "theft" & offense != "burglary") -> violent.crimes
+
+# factor violent crimes
 violent.crimes$offense <- factor(violent.crimes$offense, levels =
-                                c("robbery", "aggravated assault", "rape", "murder"))
+                                     c("robbery", "aggravated assault", "rape", "murder"))
+    
+# restrict to downtown Houston and complete cases
+violent.crimes %>% 
+    filter(-95.39681 <= lon & lon <= 
+                             -95.34188 & 29.73631 <= lat & lat <= 29.784) %>%  
+    filter(complete.cases(.)) -> violent.crimes
 
-# restrict to downtown
-# violent.crimes <- subset(violent.crimes, -95.39681 <= lon & lon <= 
-#                              -95.34188 & 29.73631 <= lat & lat <= 29.784)
- violent.crimes <- filter(violent.crimes, -95.39681 <= lon & lon <= 
-                              -95.34188 & 29.73631 <= lat & lat <= 29.784)
 
 shinyServer(function(input, output) {
+    
+    my.crime <- reactive({switch(input$crimeSelect, 
+                                 "Robbery" = filter(violent.crimes, offense == "robbery"),
+                                 "Assault" = filter(violent.crimes, offense == "aggravated assault"),
+                                 "Rape" = filter(violent.crimes, offense == "rape"),
+                                 "Murder" = filter(violent.crimes, offense == "murder"))})
+    
+    my.map <- reactive({switch(input$mapType, 
+                               "Roadmap" = "roadmap",
+                               "Satellite" = "satellite",
+                               "Terrain" = "terrain",
+                               "Hybrid" = "hybrid")})
 
     output$mapPlot <- renderPlot({
-
-        mydata <- switch(input$crimeSelect, 
-                       "Robbery" = filter(violent.crimes, offense == "robbery"),
-                       "Assault" = filter(violent.crimes, offense == "aggravated assault"),
-                       "Rape" = filter(violent.crimes, offense == "rape"),
-                       "Murder" = filter(violent.crimes, offense == "murder"))
         
-        # HoustonMap <- qmap('houston', zoom = 14, color = 'bw', legend = 'topleft')
-        HoustonMap <- qmap('houston', zoom = 14, color = 'bw')
-        
-        HoustonMap <- HoustonMap + 
-            geom_point(aes(x = lon, y = lat), colour = "red",
-                       size = 4 , alpha = 0.3, data = mydata)
-#             geom_point(aes(x = lon, y = lat, size = offense,
-#                            colour = offense), data = violent_crimes)      
+        #HoustonMap <- qmap('houston', zoom = 14, color = 'bw', maptype = input$mapType) +
+        HoustonMap <- ggmap(get_map(location = 'houston', zoom = 14, 
+                                    color = 'bw', maptype = my.map()))
+        HoustonMap <- HoustonMap + geom_point(aes(x = lon, y = lat), colour = "red",
+                                    size = 4 , alpha = 0.3, data = my.crime())
         HoustonMap
         
     })
     
-    
-#   output$distPlot <- renderPlot({
-# 
-#       # generate bins based on input$bins from ui.R
-#       x    <- faithful[, 2]
-#       bins <- seq(min(x), max(x), length.out = input$bins + 1)
-#       
-#       # draw the histogram with the specified number of bins
-#       hist(x, breaks = bins, col = 'darkgray', border = 'white')
-#       
-#   })
+    output$text1 <- renderText({ 
+        paste("Incidents of", input$crimeSelect)})
+    output$text2 <- renderText({ 
+        paste("January 2010 to August 2010")})
+    })
 
-})
