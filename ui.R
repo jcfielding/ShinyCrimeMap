@@ -15,12 +15,6 @@ shinyUI(fluidPage(
     # Sidebar with a slider input for number of bins
     sidebarLayout(
       sidebarPanel(
-          
-#         sliderInput("bins",
-#                     "Number of bins:",
-#                     min = 1,
-#                     max = 50,
-#                     value = 30),
         
         selectInput("crimeSelect", label = h4("Crime Type"), 
                     choices = c("Robbery","Assault","Rape","Murder"),
@@ -35,25 +29,14 @@ shinyUI(fluidPage(
                      
                      selected = "Roadmap", inline = FALSE)
         
-#         checkboxGroupInput("CrimeGroup", 
-#                            label = h3("Crime"), 
-#                            choices = list("Robbery" = 1, 
-#                                           "Aggravated Assault" = 2,
-#                                           "Rape" = 3,
-#                                           "Murder" = 4),
-#                            selected = 4)
       ),
       # Show a plot of the generated distribution
       mainPanel(
         plotOutput("mapPlot"),
         h4(textOutput("text1"), align = "center"),
-        h5(textOutput("text2"), align = "center")
-        
+        h5(textOutput("text2"), align = "center"),
+        h5(textOutput("text3"), align = "center")
       )  
-  
-#     # Show a plot of the generated distribution
-#     mainPanel(
-#       plotOutput("distPlot")
-#     )
+
   )
 ))

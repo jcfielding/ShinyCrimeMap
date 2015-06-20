@@ -11,21 +11,7 @@ require(ggplot2)
 require(maps)
 require(ggmap)
 
-
-# # removed unused columns
-# violent.crimes <- select(crime, offense, lon , lat)
-# 
-# # subset for violent crimes
-# violent.crimes <- filter(violent.crimes, offense != "auto theft" & offense != 
-#            "theft" & offense != "burglary")
-# 
-# # factor violent crimes
-# violent.crimes$offense <- factor(violent.crimes$offense, levels =
-#                                 c("robbery", "aggravated assault", "rape", "murder"))
-# 
-# # restrict to downtown Houston
-# violent.crimes <- filter(violent.crimes, -95.39681 <= lon & lon <= 
-#                               -95.34188 & 29.73631 <= lat & lat <= 29.784)
+load("data/crime.Rda")
 
 # removed unused columns and subset for violent crimes
 crime %>%
@@ -52,6 +38,8 @@ shinyServer(function(input, output) {
                                  "Rape" = filter(violent.crimes, offense == "rape"),
                                  "Murder" = filter(violent.crimes, offense == "murder"))})
     
+    my.crimerate <- reactive({nrow(my.crime())/nrow(violent.crimes)})
+    
     my.map <- reactive({switch(input$mapType, 
                                "Roadmap" = "roadmap",
                                "Satellite" = "satellite",
@@ -60,7 +48,8 @@ shinyServer(function(input, output) {
 
     output$mapPlot <- renderPlot({
         
-        #HoustonMap <- qmap('houston', zoom = 14, color = 'bw', maptype = input$mapType) +
+        #HoustonMap <- qmap('houston', zoom = 14, color = 'bw', maptype = input$mapType)
+        
         HoustonMap <- ggmap(get_map(location = 'houston', zoom = 14, 
                                     color = 'bw', maptype = my.map()))
         HoustonMap <- HoustonMap + geom_point(aes(x = lon, y = lat), colour = "red",
@@ -72,6 +61,8 @@ shinyServer(function(input, output) {
     output$text1 <- renderText({ 
         paste("Incidents of", input$crimeSelect)})
     output$text2 <- renderText({ 
+        paste0(round(my.crimerate()*100,1),"% of Violent Crimes")})
+    output$text3 <- renderText({ 
         paste("January 2010 to August 2010")})
     })
 
