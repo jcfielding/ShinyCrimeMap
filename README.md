@@ -1,4 +1,5 @@
-# Human Activity Recognition
+#Shiny Crime Map
+###Downtown Houston Texas Violent Crimes Interactive Map
 JHU Developing Data Products - Project 1
 
 ##Background
