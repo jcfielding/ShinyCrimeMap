@@ -30,4 +30,8 @@ http://www.houstontx.gov/police/cs/stats2.htm
 
 ##Future Development
 
-Going forward, it would be nice to extend the location and timeframe.
+Although the current version gives you basic functionality, here's some other features that would be nice:
+
+- Maps and crime data for the U.S. or the world;
+- Point location and density mapping toggling;
+- Map pan and zoom controls.
