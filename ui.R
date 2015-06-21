@@ -8,14 +8,21 @@
 library(shiny)
 
 shinyUI(fluidPage(
-
+    title = "Shiny Crime Map",
   # Application title
   titlePanel("Downtown Houston Texas Violent Crimes"),
-
+  
+  p("This interactive map allows users 
+    to view the locations of different types of violent crimes in the 
+    Houston, Texas downtown area for January 2010 through August 2010."),
+  
     # Sidebar with a slider input for number of bins
     sidebarLayout(
       sidebarPanel(
-        
+          h4("Instructions"),
+          p("Select the Crime Type you would like to map from the drop down menu.
+            Toggle the radio buttons to change Map Type. You may experience a
+            short delay as the map loads."),
         selectInput("crimeSelect", label = h4("Crime Type"), 
                     choices = c("Robbery","Assault","Rape","Murder"),
                     selected = "Robbery"),
@@ -32,10 +39,10 @@ shinyUI(fluidPage(
       ),
       # Show a plot of the generated distribution
       mainPanel(
-        plotOutput("mapPlot"),
-        h4(textOutput("text1"), align = "center"),
-        h5(textOutput("text2"), align = "center"),
-        h5(textOutput("text3"), align = "center")
+    
+          plotOutput("mapPlot"),
+          h4(textOutput("text1"), align = "center"),
+          h5(textOutput("text2"), align = "center")
       )  
 
   )

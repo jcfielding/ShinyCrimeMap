@@ -3,7 +3,11 @@ JHU Developing Data Products - Project 1
 
 ##Background
 
-This Shiny application is an interactive map that allows the user to view the locations of different types of violent crimes in the Houston, Texas downtown area.
+This Shiny application is an interactive map that allows the user to view the locations of different types of violent crimes in the Houston, Texas downtown area from January 2010 through August 2010.
+
+##Instructions
+
+Select the Crime Type you would like to map from the drop down menu. Toggle the radio buttons to change Map Type. You may experience a short delay as the map loads.
 
 ##Data
 

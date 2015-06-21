@@ -51,7 +51,7 @@ shinyServer(function(input, output) {
         #HoustonMap <- qmap('houston', zoom = 14, color = 'bw', maptype = input$mapType)
         
         HoustonMap <- ggmap(get_map(location = 'houston', zoom = 14, 
-                                    color = 'bw', maptype = my.map()))
+                                    color = 'bw', maptype = my.map()), fullpage = TRUE)
         HoustonMap <- HoustonMap + geom_point(aes(x = lon, y = lat), colour = "red",
                                     size = 4 , alpha = 0.3, data = my.crime())
         HoustonMap
@@ -59,10 +59,8 @@ shinyServer(function(input, output) {
     })
     
     output$text1 <- renderText({ 
-        paste("Incidents of", input$crimeSelect)})
+        paste("Locations of", input$crimeSelect)})
     output$text2 <- renderText({ 
         paste0(round(my.crimerate()*100,1),"% of Violent Crimes")})
-    output$text3 <- renderText({ 
-        paste("January 2010 to August 2010")})
     })
 
