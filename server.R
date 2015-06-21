@@ -37,7 +37,8 @@ shinyServer(function(input, output) {
                                  "Assault" = filter(violent.crimes, offense == "aggravated assault"),
                                  "Rape" = filter(violent.crimes, offense == "rape"),
                                  "Murder" = filter(violent.crimes, offense == "murder"))})
-    
+
+    # perform crimerate calculation
     my.crimerate <- reactive({nrow(my.crime())/nrow(violent.crimes)})
     
     my.map <- reactive({switch(input$mapType, 
@@ -45,10 +46,12 @@ shinyServer(function(input, output) {
                                "Satellite" = "satellite",
                                "Terrain" = "terrain",
                                "Hybrid" = "hybrid")})
-
+    
+    # output map
     output$mapPlot <- renderPlot({
         
-        #HoustonMap <- qmap('houston', zoom = 14, color = 'bw', maptype = input$mapType)
+        # NOTE: cannot use qmap wrapper as it can't handle dynamic inputs to maptype
+        # Use underlying ggmap instead
         
         HoustonMap <- ggmap(get_map(location = 'houston', zoom = 14, 
                                     color = 'bw', maptype = my.map()), fullpage = TRUE)
@@ -57,6 +60,8 @@ shinyServer(function(input, output) {
         HoustonMap
         
     })
+    
+    # output text boxes
     
     output$text1 <- renderText({ 
         paste("Locations of", input$crimeSelect)})
